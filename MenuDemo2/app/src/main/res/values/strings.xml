@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">MenuDemo2</string>
+    <string name="hello">请按menu键!</string>
+    <string name="exit">退出</string>
+</resources>
