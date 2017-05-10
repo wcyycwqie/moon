@@ -27,7 +27,7 @@ public class WuziqiPanel extends View
     private Bitmap WhitePiece ;
     private Bitmap BlackPiece ;
 
-    private  float RatioPieceOfLineHeight = 3*1.0f/4;
+    private  float RatioPieceOfLineHeight = 3*1.0f/4;//棋子大小的限制
 
     private boolean FirstWhite = true;//当这个值为true 白子先手
     private List<Point> WhiteArray = new ArrayList<>();
@@ -55,13 +55,14 @@ public class WuziqiPanel extends View
     }
 
     @Override
+//决定View的大小
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
 
-        int widthSize = MeasureSpec.getSize(widthMeasureSpec);
+        int widthSize = MeasureSpec.getSize(widthMeasureSpec);//子View的宽度布局要求
         int widthMode = MeasureSpec.getMode(widthMeasureSpec);
 
-        int heightSize = MeasureSpec.getSize(heightMeasureSpec);
+        int heightSize = MeasureSpec.getSize(heightMeasureSpec);//子View的高度布局要求
         int heightMode = MeasureSpec.getMode(heightMeasureSpec);
 
         int width = Math.min(widthSize, heightSize);
@@ -75,19 +76,20 @@ public class WuziqiPanel extends View
             width = widthSize;
         }
 
-        setMeasuredDimension(width, width);
+        setMeasuredDimension(width, width);//存储宽高值
 
     }
 
     @Override
+    //当宽高发生改变被系统回调
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
 
         PanelWidth = w;
         LineHeght = PanelWidth *1.0f/Max_Line;
-
+        //修改棋子的大小尺寸
         int PieceWidth =(int)(LineHeght * RatioPieceOfLineHeight);
-       WhitePiece = Bitmap.createScaledBitmap(WhitePiece,PieceWidth,PieceWidth,false);
+        WhitePiece = Bitmap.createScaledBitmap(WhitePiece,PieceWidth,PieceWidth,false);
         BlackPiece = Bitmap.createScaledBitmap(BlackPiece,PieceWidth,PieceWidth,false);
     }
 
@@ -103,22 +105,21 @@ public class WuziqiPanel extends View
             int x = (int) event.getX();
             int y = (int) event.getY();
 
-            Point p = getValidPoint( x, y);//防止棋子重复放在同一个位置
-            if(WhiteArray.contains(p) || BlackArray.contains(p))
+            Point p = getValidPoint( x, y);//存储点击区域的坐标值
+
+            if(WhiteArray.contains(p) || BlackArray.contains(p))//防止棋子重复放在同一个位置
             {
                 return false;
             }
-            if(FirstWhite) {
-                 WhiteArray.add(p);
+            if(FirstWhite)
+            {
+                WhiteArray.add(p);
             }else
             {
                 BlackArray.add(p);
             }
             invalidate();
             FirstWhite = !FirstWhite;//黑白双方互换
-
-
-           //表明view对用户手势有反应
         }
         return true;
     }
@@ -128,16 +129,18 @@ public class WuziqiPanel extends View
     }
 
     @Override
-    
+    //绘制View
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        
         drawBoard(canvas);
         drawPieces(canvas);
         checkGameOver();
 
     }
 
+
+
+    //游戏结束
     private void checkGameOver() {
         boolean WhiteWin = checkFiveInLine(WhiteArray);
         boolean BlackWin = checkFiveInLine(BlackArray);
@@ -155,6 +158,7 @@ public class WuziqiPanel extends View
 
     }
 
+//判断五子连线
     private boolean checkFiveInLine(List<Point> points) {
         for (Point p : points)
         {
@@ -289,6 +293,8 @@ public class WuziqiPanel extends View
 
         return false;
     }
+
+    //绘制棋子
     private void drawPieces(Canvas canvas) {
         for(int i = 0 , n = WhiteArray.size(); i < n ; i++)
         {
@@ -307,17 +313,18 @@ public class WuziqiPanel extends View
         }
     }
 
+    //棋盘的绘制
     private void drawBoard(Canvas canvas) {
         int w = PanelWidth ;
         float lineHeight = LineHeght ;
 
-        for(int i=0 ; i<Max_Line ; i++ )
+        for(int i=0 ; i<Max_Line ; i++ )//棋盘的宽高
         {
             int startX = (int)(lineHeight/2);
             int endX = (int)(w-lineHeight/2);
             int y =(int)((0.5 + i)*lineHeight);
-            canvas.drawLine(startX,y,endX,y,mPaint);
-            canvas.drawLine(y,startX,y,endX,mPaint);
+            canvas.drawLine(startX,y,endX,y,mPaint);//横线
+            canvas.drawLine(y,startX,y,endX,mPaint);//竖线
         }
 
     }
